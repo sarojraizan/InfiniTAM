@@ -7,7 +7,7 @@
 using namespace ITMLib::Objects;
 
 ITMLibSettings::ITMLibSettings(void)
-	: sceneParams(0.02f, 100, 0.005f, 0.2f, 3.0f, false)
+	: sceneParams(0.05f, 50, 0.005f, 0.2f, 3.0f, false)
 {
 	/// depth threashold for the ICP tracker
 	depthTrackerICPThreshold = 0.1f * 0.1f;
@@ -45,10 +45,9 @@ ITMLibSettings::ITMLibSettings(void)
 	//trackerType = TRACKER_IMU;
 	//trackerType = TRACKER_WICP;
 
-	/// model the sensor noise as  the weight for weighted ICP
+	/// model the sensor noise as the weight for weighted ICP
 	modelSensorNoise = false;
 	if (trackerType == TRACKER_WICP) modelSensorNoise = true;
-	
 
 	// builds the tracking regime. level 0 is full resolution
 	if (trackerType == TRACKER_IMU)

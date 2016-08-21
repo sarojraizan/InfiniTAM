@@ -16,7 +16,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-
 #endif
 
 #ifndef MEMORY_DEVICE_TYPE
@@ -65,6 +64,15 @@ namespace ORUtils
 			}
 
 			return 0;
+		}
+		
+		void SetData(DEVICEPTR(T)* data, MemoryDeviceType memoryType, bool metalCompatible = true)
+		{
+			switch (memoryType)
+			{
+			case MEMORYDEVICE_CPU: Free(); data_cpu = data; this->isAllocated_CPU = true; this->isMetalCompatible = metalCompatible; break;
+			case MEMORYDEVICE_CUDA: if (data_cuda != NULL) ORcudaSafeCall(cudaFree(data_cuda)); data_cuda = data; break; 
+			}
 		}
 
 		/** Get the data pointer on CPU or GPU. */

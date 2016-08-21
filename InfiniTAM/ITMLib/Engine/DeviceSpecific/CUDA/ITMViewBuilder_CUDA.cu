@@ -92,6 +92,31 @@ void ITMViewBuilder_CUDA::UpdateView(ITMView **view_ptr, ITMUChar4Image *rgbImag
 	view->depth->UpdateDeviceFromHost();
 }
 
+void ITMViewBuilder_CUDA::UpdateViewPointers(ITMView **view_ptr, Vector2<int> noDims_rgb, Vector2<int> noDims_depth, Vector4u *rgbImage, float *depthImage)
+{
+	if (*view_ptr == NULL)
+	{
+		*view_ptr = new ITMView(calib, noDims_rgb, noDims_depth, true);
+	}
+
+	ITMView *view = *view_ptr;
+
+	view->rgb->SetData(rgbImage, MEMORYDEVICE_CUDA, true);
+	view->depth->SetData(depthImage, MEMORYDEVICE_CUDA, true);
+}
+
+void ITMViewBuilder_CUDA::ComputeNormalAndWeights(ITMView **view_ptr)
+{
+	if (*view_ptr == NULL)
+	{
+		std::cerr << "View pointer nul" <<  std::endl;
+		//*view_ptr = new ITMView(calib, noDims_rgb, noDims_depth, true);
+	}
+	ITMView *view = *view_ptr;
+	std::cerr << view->calib->intrinsics_d.projectionParamsSimple.all << std::endl;
+	this->ComputeNormalAndWeights(view->depthNormal, view->depthUncertainty, view->depth, view->calib->intrinsics_d.projectionParamsSimple.all);
+}
+
 void ITMViewBuilder_CUDA::UpdateView(ITMView **view_ptr, ITMUChar4Image *rgbImage, ITMShortImage *depthImage, bool useBilateralFilter, ITMIMUMeasurement *imuMeasurement)
 {
 	if (*view_ptr == NULL) 

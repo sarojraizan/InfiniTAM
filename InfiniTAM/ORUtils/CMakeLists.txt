@@ -35,7 +35,7 @@ SOURCE_GROUP("" FILES ${ORUTILS_HEADERS})
 # Specify the include directories, target and link libraries #
 ##############################################################
 
-add_library(ORUtils ${ORUTILS_OBJECTS})
+add_library(ORUtils SHARED ${ORUTILS_OBJECTS})
 
 IF(WITH_CUDA)
 #  include_directories(${CUDA_INCLUDE_DIRS})

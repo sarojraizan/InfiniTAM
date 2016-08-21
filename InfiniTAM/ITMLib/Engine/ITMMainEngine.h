@@ -90,11 +90,18 @@ namespace ITMLib
 			/// Gives access to the current camera pose and additional tracking information
 			ITMTrackingState* GetTrackingState(void) { return trackingState; }
 
+			void SetTrackingState(Matrix4f M) { trackingState->pose_d->SetM(M); trackingState->pose_d->Coerce();}
+			Vector4f* GetPointsMapPointer();
+
 			/// Gives access to the internal world representation
 			ITMScene<ITMVoxel, ITMVoxelIndex>* GetScene(void) { return scene; }
 
 			/// Process a frame with rgb and depth images and optionally a corresponding imu measurement
 			void ProcessFrame(ITMUChar4Image *rgbImage, ITMShortImage *rawDepthImage, ITMIMUMeasurement *imuMeasurement = NULL);
+			void UpdateViewPointers(Vector2i noDims_rgb, Vector2i noDims_depth, Vector4u *rgbImage, float *depthImage);
+			void ComputeNormalAndWeights();
+			void FuseFrameIntoModel();
+			void RaycastToCurrentView();
 
 			// Gives access to the data structure used internally to store any created meshes
 			ITMMesh* GetMesh(void) { return mesh; }

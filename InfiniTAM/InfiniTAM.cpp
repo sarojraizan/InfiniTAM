@@ -90,6 +90,12 @@ static void CreateDefaultImageSource(ImageSourceEngine* & imageSource, IMUSource
 		imageSource->calib.disparityCalib.type = ITMDisparityCalib::TRAFO_AFFINE;
 		imageSource->calib.disparityCalib.params = Vector2f(1.0f/1000.0f, 0.0f);
 	}
+	if (imageSource->calib.disparityCalib.params == Vector2f(0.001f, 0.0f))
+	{
+		imageSource->calib.disparityCalib.type = ITMDisparityCalib::TRAFO_AFFINE;
+		imageSource->calib.disparityCalib.params = Vector2f(1.0f/5000.0f, 0.0f);
+		std::cout << "Reading as TUM dataset style depth maps..." << std::endl;
+	}
 }
 
 int main(int argc, char** argv)

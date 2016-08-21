@@ -21,6 +21,9 @@ namespace ITMLib
 			void UpdateView(ITMView **view, ITMUChar4Image *rgbImage, ITMShortImage *rawDepthImage, bool useBilateralFilter, bool modelSensorNoise = false);
 			void UpdateView(ITMView **view, ITMUChar4Image *rgbImage, ITMFloatImage *depthImage);
 
+			void UpdateViewPointers(ITMView **view, Vector2i noDims_rgb, Vector2i noDims_depth, Vector4u *rgbImage, float *depthImage){};
+			void ComputeNormalAndWeights(ITMView **view){};
+
 			void UpdateView(ITMView **view, ITMUChar4Image *rgbImage, ITMShortImage *depthImage, bool useBilateralFilter, ITMIMUMeasurement *imuMeasurement);
 
 			ITMViewBuilder_CPU(const ITMRGBDCalib *calib);

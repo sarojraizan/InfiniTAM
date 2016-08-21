@@ -209,7 +209,7 @@ if(WITH_CUDA)
     set(CUDA_ARCH_OPTIONS "${CUDA_ARCH_OPTIONS} -gencode arch=compute_${a},code=compute_${a}")
   endforeach()
   include_directories(${CUDA_INCLUDE_DIRS})
-  cuda_add_library(ITMLib
+  cuda_add_library(ITMLib SHARED
 	${ITMLIB_CPU_OBJECTS}
 	${ITMLIB_CUDA_OBJECTS}
 	${ITMLIB_COMMON_OBJECTS}
@@ -217,7 +217,7 @@ if(WITH_CUDA)
   target_link_libraries(ITMLib ${CUDA_LIBRARY})
 else()
   add_definitions(-DCOMPILE_WITHOUT_CUDA)
-  add_library(ITMLib ${ITMLIB_CPU_OBJECTS} ${ITMLIB_COMMON_OBJECTS})
+  add_library(ITMLib SHARED ${ITMLIB_CPU_OBJECTS} ${ITMLIB_COMMON_OBJECTS})
 endif()
 
 target_link_libraries(ITMLib Utils)

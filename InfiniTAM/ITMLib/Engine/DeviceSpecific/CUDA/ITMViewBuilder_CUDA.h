@@ -23,6 +23,9 @@ namespace ITMLib
 
 			void UpdateView(ITMView **view, ITMUChar4Image *rgbImage, ITMShortImage *depthImage, bool useBilateralFilter, ITMIMUMeasurement *imuMeasurement);
 
+			void UpdateViewPointers(ITMView **view, Vector2i noDims_rgb, Vector2i noDims_depth, Vector4u *rgbImage, float *depthImage);
+			void ComputeNormalAndWeights(ITMView **view);
+
 			ITMViewBuilder_CUDA(const ITMRGBDCalib *calib);
 			~ITMViewBuilder_CUDA(void);
 		};

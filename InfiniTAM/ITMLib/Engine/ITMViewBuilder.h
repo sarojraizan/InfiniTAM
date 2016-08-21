@@ -33,7 +33,12 @@ namespace ITMLib
 			virtual void ComputeNormalAndWeights(ITMFloat4Image *normal_out, ITMFloatImage *sigmaZ_out, const ITMFloatImage *depth_in, Vector4f intrinsic) = 0;
 
 			virtual void UpdateView(ITMView **view, ITMUChar4Image *rgbImage, ITMShortImage *rawDepthImage, bool useBilateralFilter, bool modelSensorNoise = false) = 0;
+
 			virtual void UpdateView(ITMView **view, ITMUChar4Image *rgbImage, ITMFloatImage *depthImage) = 0;
+
+			virtual void UpdateViewPointers(ITMView **view, Vector2i noDims_rgb, Vector2i noDims_depth, Vector4u *rgbImage, float *depthImage) = 0;
+
+			virtual void ComputeNormalAndWeights(ITMView **view) = 0;
 
 			virtual void UpdateView(ITMView **view, ITMUChar4Image *rgbImage, ITMShortImage *depthImage, bool useBilateralFilter,
 				ITMIMUMeasurement *imuMeasurement) = 0;

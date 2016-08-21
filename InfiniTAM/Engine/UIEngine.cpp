@@ -419,6 +419,13 @@ void UIEngine::Initialise(int & argc, char** argv, ImageSourceEngine *imageSourc
 
 	sdkResetTimer(&timer_average);
 
+/*
+#ifndef COMPILE_WITHOUT_CUDA
+		ORcudaSafeCall(cudaMalloc((void**)&rgbImage, imageSource->getRGBImageSize().x*imageSource->getRGBImageSize().y*sizeof(Vector4u)));
+		ORcudaSafeCall(cudaMalloc((void**)&depthImage, imageSource->getDepthImageSize().x*imageSource->getDepthImageSize().y*sizeof(Vector4u)*sizeof(float)));
+	        mainEngine->UpdateViewPointers(imageSource->getRGBImageSize(), imageSource->getDepthImageSize(), rgbImage, depthImage);
+#endif
+*/
 	printf("initialised.\n");
 }
 
@@ -466,6 +473,51 @@ void UIEngine::ProcessFrame()
 	sdkStartTimer(&timer_instant); sdkStartTimer(&timer_average);
 
 	//actual processing on the mailEngine
+/*
+	UIEngine *uiEngine = UIEngine::Instance();
+	Matrix4f M;
+	M.at(0,0) = 1; 	M.at(0,1) = 0; 	M.at(0,2) = 0; 	M.at(0,3) = 0;	
+       	M.at(1,0) = 0; 	M.at(1,1) = 1; 	M.at(1,2) = 0; 	M.at(1,3) = 0;
+	M.at(2,0) = 0; 	M.at(2,1) = 0; 	M.at(2,2) = 1;	M.at(2,3) = 0; 
+	M.at(3,0) = 0; 	M.at(3,1) = 0; 	M.at(3,2) = 0; 	M.at(3,3) = 1;
+	mainEngine->SetTrackingState(M);
+	Vector4u *rgbHost = inputRGBImage->GetData(MEMORYDEVICE_CPU);
+ 	short *depthHostraw = inputRawDepthImage->GetData(MEMORYDEVICE_CPU);
+	ITMFloatImage* mydepth = new ITMFloatImage(inputRawDepthImage->noDims, true, true);
+	float *depthHost = mydepth->GetData(MEMORYDEVICE_CPU);
+
+	ITMIntrinsics depthIntrinsics = uiEngine->mainEngine->GetView()->calib->intrinsics_d;
+	Vector2f disparityCalibParams = uiEngine->mainEngine->GetView()->calib->disparityCalib.params;
+	float fx_depth = depthIntrinsics.projectionParamsSimple.fx;
+	
+	for (int y = 0; y < inputRawDepthImage->noDims.y; y++) 
+        	for (int x = 0; x < inputRawDepthImage->noDims.x; x++)
+		{
+			int locId = x + y * inputRawDepthImage->noDims.x;
+			short disparity = depthHostraw[locId];
+			float depth = (float)disparity/5000;
+			depthHost[locId] = (depth > 0) ? depth : -1.0f;
+
+			//float disparity_tmp = disparityCalibParams.x - (float)(disparity);
+			//
+
+			//if (disparity_tmp == 0) depth = 0.0;
+			//else depth = 8.0f * disparityCalibParams.y * fx_depth / disparity_tmp;
+
+			//depthHost[locId] = (depth > 0) ? depth : -1.0f;
+
+		}
+
+
+#ifndef COMPILE_WITHOUT_CUDA
+	ORcudaSafeCall(cudaMemcpy(rgbImage, rgbHost, inputRGBImage->noDims.x*inputRGBImage->noDims.y*sizeof(Vector4u), cudaMemcpyHostToDevice));
+	ORcudaSafeCall(cudaMemcpy(depthImage, depthHost, inputRawDepthImage->noDims.x*inputRawDepthImage->noDims.y*sizeof(float), cudaMemcpyHostToDevice));
+#endif
+	cudaDeviceSynchronize();
+
+	mainEngine->ProcessFrameFusion();
+*/
+
 	if (imuSource != NULL) mainEngine->ProcessFrame(inputRGBImage, inputRawDepthImage, inputIMUMeasurement);
 	else mainEngine->ProcessFrame(inputRGBImage, inputRawDepthImage);
 

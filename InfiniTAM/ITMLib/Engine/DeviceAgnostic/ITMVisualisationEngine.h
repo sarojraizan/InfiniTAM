@@ -404,6 +404,8 @@ _CPU_AND_GPU_CODE_ inline void processPixelNormal(DEVICEPTR(Vector4u) &outRender
 
 	computeNormalAndAngle<TVoxel, TIndex>(foundPoint, point, voxelData, voxelIndex, lightSource, outNormal, angle);
 
+	//if(foundPoint and (int)voxelData->w_depth < 2) foundPoint = false;
+	
 	if (foundPoint) drawPixelNormal(outRendering, outNormal);
 	else outRendering = Vector4u((uchar)0);
 }

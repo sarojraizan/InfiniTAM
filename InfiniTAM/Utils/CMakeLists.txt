@@ -10,7 +10,7 @@ IF(PNG_FOUND)
   add_definitions(-DUSE_LIBPNG)
 ENDIF()
 
-add_library(Utils
+add_library(Utils SHARED
 FileUtils.cpp
 FileUtils.h
 NVTimer.h

@@ -84,6 +84,8 @@ namespace InfiniTAM
 			char *outFolder;
 			bool needsRefresh;
 			ITMUChar4Image *saveImage;
+			Vector4u *rgbImage;
+			float *depthImage;
 
 			void Initialise(int & argc, char** argv, ImageSourceEngine *imageSource, IMUSourceEngine *imuSource, ITMMainEngine *mainEngine,
 				const char *outFolder, ITMLibSettings::DeviceType deviceType);

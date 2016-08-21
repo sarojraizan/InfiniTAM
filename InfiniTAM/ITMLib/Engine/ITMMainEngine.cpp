@@ -56,12 +56,13 @@ ITMMainEngine::ITMMainEngine(const ITMLibSettings *settings, const ITMRGBDCalib 
 	denseMapper->ResetScene(scene);
 
 	imuCalibrator = new ITMIMUCalibrator_iPad();
+	
 	tracker = ITMTrackerFactory<ITMVoxel, ITMVoxelIndex>::Instance().Make(trackedImageSize, settings, lowLevelEngine, imuCalibrator, scene);
 	trackingController = new ITMTrackingController(tracker, visualisationEngine, lowLevelEngine, settings);
 
 	trackingState = trackingController->BuildTrackingState(trackedImageSize);
 	tracker->UpdateInitialPose(trackingState);
-
+	
 	view = NULL; // will be allocated by the view builder
 
 	fusionActive = true;
@@ -123,6 +124,43 @@ void ITMMainEngine::ProcessFrame(ITMUChar4Image *rgbImage, ITMShortImage *rawDep
 
 	// raycast to renderState_live for tracking and free visualisation
 	trackingController->Prepare(trackingState, view, renderState_live);
+}
+
+void ITMMainEngine::UpdateViewPointers(Vector2i noDims_rgb, Vector2i noDims_depth, Vector4u *rgbImage, float *depthImage)
+{
+	viewBuilder->UpdateViewPointers(&view, noDims_rgb, noDims_depth, rgbImage, depthImage);
+}
+
+void ITMMainEngine::ComputeNormalAndWeights()
+{
+	viewBuilder->ComputeNormalAndWeights(&view);
+}
+
+Vector4f* ITMMainEngine::GetPointsMapPointer()
+{
+	Vector4f* pointsMap;
+	if (trackingState)
+		pointsMap = trackingState->pointCloud->locations->GetData(MEMORYDEVICE_CUDA);
+	else
+		pointsMap = 0;
+
+	return pointsMap;
+}
+
+void ITMMainEngine::RaycastToCurrentView()
+{
+	if (!mainProcessingActive) return;
+	
+	// raycast to renderState_live for tracking and free visualisation
+	trackingController->Prepare(trackingState, view, renderState_live);
+}
+
+void ITMMainEngine::FuseFrameIntoModel()
+{
+	if (!mainProcessingActive) return;
+
+	// fusion
+	if (fusionActive) denseMapper->ProcessFrame(view, trackingState, scene, renderState_live);
 }
 
 Vector2i ITMMainEngine::GetImageSize(void) const
