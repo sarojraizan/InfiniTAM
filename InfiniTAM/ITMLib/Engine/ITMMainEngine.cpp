@@ -8,6 +8,71 @@ ITMMainEngine::ITMMainEngine(const ITMLibSettings *settings, const ITMRGBDCalib 
 {
 	// create all the things required for marching cubes and mesh extraction
 	// - uses additional memory (lots!)
+	//static const bool createMeshingEngine = true;
+
+	//if ((imgSize_d.x == -1) || (imgSize_d.y == -1)) imgSize_d = imgSize_rgb;
+
+	//this->settings = settings;
+
+	//this->scene = new ITMScene<ITMVoxel, ITMVoxelIndex>(&(settings->sceneParams), settings->useSwapping, 
+	//	settings->deviceType == ITMLibSettings::DEVICE_CUDA ? MEMORYDEVICE_CUDA : MEMORYDEVICE_CPU);
+
+	//meshingEngine = NULL;
+	//switch (settings->deviceType)
+	//{
+	//case ITMLibSettings::DEVICE_CPU:
+	//	lowLevelEngine = new ITMLowLevelEngine_CPU();
+	//	viewBuilder = new ITMViewBuilder_CPU(calib);
+	//	visualisationEngine = new ITMVisualisationEngine_CPU<ITMVoxel, ITMVoxelIndex>(scene);
+	//	if (createMeshingEngine) meshingEngine = new ITMMeshingEngine_CPU<ITMVoxel, ITMVoxelIndex>();
+	//	break;
+	//case ITMLibSettings::DEVICE_CUDA:
+//#ifndef COMPILE_WITHOUT_CUDA
+	//	lowLevelEngine = new ITMLowLevelEngine_CUDA();
+	//	viewBuilder = new ITMViewBuilder_CUDA(calib);
+	//	visualisationEngine = new ITMVisualisationEngine_CUDA<ITMVoxel, ITMVoxelIndex>(scene);
+	//	if (createMeshingEngine) meshingEngine = new ITMMeshingEngine_CUDA<ITMVoxel, ITMVoxelIndex>();
+//#endif
+	//	break;
+	//case ITMLibSettings::DEVICE_METAL:
+//#ifdef COMPILE_WITH_METAL
+	//	lowLevelEngine = new ITMLowLevelEngine_Metal();
+	//	viewBuilder = new ITMViewBuilder_Metal(calib);
+	//	visualisationEngine = new ITMVisualisationEngine_Metal<ITMVoxel, ITMVoxelIndex>(scene);
+	//	if (createMeshingEngine) meshingEngine = new ITMMeshingEngine_CPU<ITMVoxel, ITMVoxelIndex>();
+//#endif
+	//	break;
+//	}
+
+//	mesh = NULL;
+//	if (createMeshingEngine) mesh = new ITMMesh(settings->deviceType == ITMLibSettings::DEVICE_CUDA ? MEMORYDEVICE_CUDA : MEMORYDEVICE_CPU);
+
+//	Vector2i trackedImageSize = ITMTrackingController::GetTrackedImageSize(settings, imgSize_rgb, imgSize_d);
+
+//	renderState_live = visualisationEngine->CreateRenderState(trackedImageSize);
+//	renderState_freeview = NULL; //will be created by the visualisation engine
+
+//	denseMapper = new ITMDenseMapper<ITMVoxel, ITMVoxelIndex>(settings);
+//	denseMapper->ResetScene(scene);
+
+//	imuCalibrator = new ITMIMUCalibrator_iPad();
+	
+//	tracker = ITMTrackerFactory<ITMVoxel, ITMVoxelIndex>::Instance().Make(trackedImageSize, settings, lowLevelEngine, imuCalibrator, scene);
+//	trackingController = new ITMTrackingController(tracker, visualisationEngine, lowLevelEngine, settings);
+
+//	trackingState = trackingController->BuildTrackingState(trackedImageSize);
+//	tracker->UpdateInitialPose(trackingState);
+	
+//	view = NULL; // will be allocated by the view builder
+
+//	fusionActive = true;
+//	mainProcessingActive = true;
+}
+
+void ITMMainEngine::Initialize(const ITMLibSettings *settings, const ITMRGBDCalib *calib, Vector2i imgSize_rgb, Vector2i imgSize_d) {
+
+	// create all the things required for marching cubes and mesh extraction
+	// - uses additional memory (lots!)
 	static const bool createMeshingEngine = true;
 
 	if ((imgSize_d.x == -1) || (imgSize_d.y == -1)) imgSize_d = imgSize_rgb;
@@ -67,6 +132,31 @@ ITMMainEngine::ITMMainEngine(const ITMLibSettings *settings, const ITMRGBDCalib 
 
 	fusionActive = true;
 	mainProcessingActive = true;
+}
+
+void ITMMainEngine::Shutdown() {
+	delete renderState_live;
+	if (renderState_freeview!=NULL) delete renderState_freeview;
+
+	delete scene;
+
+	delete denseMapper;
+	delete trackingController;
+
+	delete tracker;
+	delete imuCalibrator;
+
+	delete lowLevelEngine;
+	delete viewBuilder;
+
+	delete trackingState;
+	if (view != NULL) delete view;
+
+	delete visualisationEngine;
+
+	if (meshingEngine != NULL) delete meshingEngine;
+
+	if (mesh != NULL) delete mesh;
 }
 
 ITMMainEngine::~ITMMainEngine()

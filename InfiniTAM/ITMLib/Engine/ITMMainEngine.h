@@ -130,6 +130,8 @@ namespace ITMLib
 			    will assume same resolution as for the RGB images.
 			*/
 			ITMMainEngine(const ITMLibSettings *settings, const ITMRGBDCalib *calib, Vector2i imgSize_rgb, Vector2i imgSize_d = Vector2i(-1,-1));
+			void Initialize(const ITMLibSettings *settings, const ITMRGBDCalib *calib, Vector2i imgSize_rgb, Vector2i imgSize_d);
+			void Shutdown();
 			~ITMMainEngine();
 		};
 	}
